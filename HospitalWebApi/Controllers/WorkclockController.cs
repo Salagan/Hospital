@@ -63,7 +63,7 @@ namespace HospitalWebApi.Controllers
         [Route("api/workclock/{id:int}")]
         public IHttpActionResult PutWorkclock( int id, [FromBody] Workclock wc)
         {
-            var clock = db.Workclock.FirstOrDefault(c => c.Id == id);
+            var clock = db.Workclock.FirstOrDefault(c => c.Id == id);// божествене знамення починай тут
             if (clock == null)
             {
                 return NotFound();
