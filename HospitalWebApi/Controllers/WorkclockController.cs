@@ -45,18 +45,33 @@ namespace HospitalWebApi.Controllers
 
             if (doc.Where(d => d.Days == enm).Any())
             {
-                var clock = mapper.Map<Workclock>(wc);
+                //знаходимо робочі години в дні
+                var timeStart = db.WorkDays.Where(d => d.Days== enm).Select(s => s.TimeStart).FirstOrDefault().Hour;
+                var timeEnd = db.WorkDays.Where(d => d.Days == enm).Select(s => s.TimeEnd).FirstOrDefault().Hour;
 
-                db.Workclock.Add(clock);
-                try
+                if (timeStart <= wc.AppointHour && timeEnd >= wc.AppointHour)
                 {
-                    db.SaveChanges();
-                    return Ok();
+                    //рахуємо скільки вже призначено на цю годину пацієнтів
+                    var quantity = db.Workclock.Select(q => q.AppointHour).Count();
+
+                    if (quantity <= db.Doctors.Select(p => p.PatientsPerHour).FirstOrDefault())
+                    {
+                        var clock = mapper.Map<Workclock>(wc);
+
+                        db.Workclock.Add(clock);
+                        try
+                        {
+                            db.SaveChanges();
+                            return Ok();
+                        }
+                        catch (Exception)
+                        {
+                            return BadRequest();
+                        }
+                    }
+                    return BadRequest("There are too many patients at this time try to make anothere");
                 }
-                catch (Exception)
-                {
-                    return BadRequest();
-                }
+                return BadRequest("Can't make appointment at this hour ");
             }
             return BadRequest();
         }
