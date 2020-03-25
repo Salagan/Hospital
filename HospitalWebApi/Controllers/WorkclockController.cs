@@ -52,7 +52,7 @@ namespace HospitalWebApi.Controllers
                 if (timeStart <= wc.AppointHour && timeEnd >= wc.AppointHour)
                 {
                     //рахуємо скільки вже призначено на цю годину пацієнтів
-                    var quantity = db.Workclock.Select(q => q.AppointHour).Count();
+                    var quantity = db.Workclock.Where(q => q.AppointHour == wc.AppointHour).Count();
 
                     if (quantity <= db.Doctors.Select(p => p.PatientsPerHour).FirstOrDefault())
                     {
