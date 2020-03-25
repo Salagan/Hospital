@@ -54,7 +54,7 @@ namespace HospitalWebApi.Controllers
                     //рахуємо скільки вже призначено на цю годину пацієнтів
                     var quantity = db.Workclock.Where(q => q.AppointHour == wc.AppointHour).Count();
 
-                    if (quantity <= db.Doctors.Select(p => p.PatientsPerHour).FirstOrDefault())
+                    if (quantity <= db.Doctors.Where(i => i.Id == wc.DoctorId).Select(p => p.PatientsPerHour).FirstOrDefault())
                     {
                         var clock = mapper.Map<Workclock>(wc);
 
